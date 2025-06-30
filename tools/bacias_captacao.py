@@ -3,9 +3,7 @@ from qgis.core import Qgis, QgsGeometry, QgsField, QgsFields, QgsFeature, QgsMes
 from PyQt5.QtCore import Qt, QVariant
 
 DIAMETRO = "diametro"
-
-FIELDS = QgsFields()
-FIELDS.append(QgsField(DIAMETRO, QVariant.Int))
+FIELD = QgsField(DIAMETRO, QVariant.Int)
 
 class BaciasCaptacao(QgsMapToolEmitPoint):
     def __init__(self, iface, canvas, radius=6, border_color=Qt.red, fill_color=Qt.green, previous_tool=None):
@@ -14,7 +12,7 @@ class BaciasCaptacao(QgsMapToolEmitPoint):
         super().__init__(self.canvas)
         
         self.rubberBand = QgsRubberBand(self.canvas, Qgis.GeometryType.Polygon)
-        self.rubberBand.setWidth(2.5)
+        self.rubberBand.setWidth(3)
         self.rubberBand.setStrokeColor(border_color)
         self.rubberBand.setFillColor(fill_color)
         self.rubberBand.setWidth(radius)
@@ -44,7 +42,6 @@ class BaciasCaptacao(QgsMapToolEmitPoint):
 
     def canvasPressEvent(self, event):
         if event.button() == Qt.LeftButton:
-            point = self.toMapCoordinates(event.pos())
             self.active_layer = self.canvas.currentLayer()
 
             # VERIFICA SE A CAMADA ESTÁ ATIVA E É DO TIPO POLIGONO
@@ -63,12 +60,10 @@ class BaciasCaptacao(QgsMapToolEmitPoint):
         if event.button() == Qt.LeftButton and self.preview_geometry and self.active_layer:
             try:
                 self.active_layer.startEditing()
-                feat = QgsFeature(FIELDS)
-                feat.setGeometry(self.preview_geometry)
-                
                 field_idx = self.active_layer.fields().indexOf(DIAMETRO)
+                
                 if field_idx == -1:
-                    response = self.active_layer.dataProvider().addAttributes(FIELDS)
+                    response = self.active_layer.dataProvider().addAttributes([FIELD])
                     if(response):
                         self.active_layer.updateFields()
                         field_idx = self.active_layer.fields().indexOf(DIAMETRO)
@@ -76,6 +71,9 @@ class BaciasCaptacao(QgsMapToolEmitPoint):
                         self.printMessage("Erro ao criar campo >>diametro<<")
                         return
                 
+                layer_fields = self.active_layer.fields()
+                feat = QgsFeature(layer_fields)
+                feat.setGeometry(self.preview_geometry)
                 feat[DIAMETRO] = self.radius*2
                 self.active_layer.addFeature(feat)
                 self.active_layer.commitChanges()
@@ -85,6 +83,13 @@ class BaciasCaptacao(QgsMapToolEmitPoint):
             finally:
                 self.rubberBand.hide()
                 self.preview_geometry = None
+        
+        elif event.button() == Qt.RightButton:
+            self.preview_geometry = None
+            self.rubberBand.hide()
+            QgsMapToolEmitPoint.deactivate(self)
+            self.canvas.unsetMapTool(self)
+            self.printMessage(f"Bacias de Captação com {self.radius}m de raio desativada.", push=False, level=Qgis.MessageLevel.Info)
     
     def deactivate(self):
         self.rubberBand.hide()
