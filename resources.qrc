@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/validar_medicao" >
+        <file>icon.png</file>
+    </qresource>
+</RCC>
