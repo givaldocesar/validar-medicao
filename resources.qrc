@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/plugins/validar_medicao" >
-        <file>icon.png</file>
+        <file>resources/bacias_captacao_6.png</file>
+        <file>resources/bacias_captacao_12.png</file>
     </qresource>
 </RCC>
