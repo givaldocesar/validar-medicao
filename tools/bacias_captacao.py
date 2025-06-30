@@ -59,7 +59,6 @@ class BaciasCaptacao(QgsMapToolEmitPoint):
                 self.preview_geometry = None
                 return
 
-    
     def canvasReleaseEvent(self, event):
         if event.button() == Qt.LeftButton and self.preview_geometry and self.active_layer:
             try:
@@ -86,7 +85,6 @@ class BaciasCaptacao(QgsMapToolEmitPoint):
             finally:
                 self.rubberBand.hide()
                 self.preview_geometry = None
-    
     
     def deactivate(self):
         self.rubberBand.hide()
