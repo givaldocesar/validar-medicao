@@ -6,7 +6,7 @@
 name=Validar Medição
 qgisMinimumVersion=3.30
 description=Valida medições de bacias de captação e terraços executados pela CODEVASF 1SR
-version=0.2
+version=0.3
 author=Givaldo Cavalcanti
 email=givaldo.junior@codevasf.gov.br
 

@@ -38,7 +38,6 @@ class ValidarMedicao:
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
         return QCoreApplication.translate('ValidarMedicao', message)
 
-
     def add_action(
         self,
         icon_path,
@@ -63,7 +62,7 @@ class ValidarMedicao:
             action.setWhatsThis(whats_this)
 
         if add_to_toolbar:
-            self.iface.addToolBarIcon(action)
+            self.toolbar.addAction(action)
 
         if add_to_menu:
             self.iface.addPluginToMenu(
@@ -75,6 +74,8 @@ class ValidarMedicao:
         return action
 
     def initGui(self):
+        self.toolbar = self.iface.addToolBar("Validar Medição")
+        
         self.add_action(
             ':/plugins/validar_medicao/resources/bacias_captacao_6.png',
             text=self.tr(u'Criar Bacia de 6m'),
@@ -92,11 +93,10 @@ class ValidarMedicao:
 
     def unload(self):
         for action in self.actions:
-            self.iface.removePluginMenu(
-                self.tr(u'&Validar Medição'),
-                action)
-            self.iface.removeToolBarIcon(action)
-
+            self.iface.removePluginMenu(self.tr(u'&Validar Medição'), action)
+            self.toolbar.removeAction(action)
+        
+        self.toolbar.deleteLater()
 
     def run_criar_bacia_6(self):
         canvas = self.iface.mapCanvas()
@@ -104,20 +104,17 @@ class ValidarMedicao:
         self.current_tool = BaciasCaptacao(self.iface,
                                            canvas, 
                                            radius=6, 
-                                           border_color=QgsColorUtils.colorFromString("#7DF9FF"),
-                                           previous_tool=self.previous_tool)
+                                           border_color=QgsColorUtils.colorFromString("#7DF9FF"))
         canvas.setMapTool(self.current_tool)
         QgsMessageLog.logMessage("Bacias de Captação com 6m de raio ativada.", "Validar Medição", level=Qgis.Info)
-
-    
+ 
     def run_criar_bacia_12(self):
         canvas = self.iface.mapCanvas()
         self.previous_tool = canvas.mapTool()
         self.current_tool = BaciasCaptacao(self.iface,
                                            canvas, 
                                            radius=12, 
-                                           border_color=QgsColorUtils.colorFromString("#C70039"),
-                                           previous_tool=self.previous_tool)
+                                           border_color=QgsColorUtils.colorFromString("#C70039"))
         canvas.setMapTool(self.current_tool)
         QgsMessageLog.logMessage("Bacias de Captação com 12m de raio ativada.", "Validar Medição", level=Qgis.Info)
 
