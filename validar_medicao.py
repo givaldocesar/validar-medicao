@@ -4,10 +4,12 @@ from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
 from qgis.core import Qgis, QgsMessageLog, QgsColorUtils
+from qgis.gui import QgsMapToolEmitPoint
 
 from .resources import *
 from .validar_medicao_dialog import ValidarMedicaoDialog
 from .tools.bacias_captacao import BaciasCaptacao
+from .tools.terracos import Terracos
 import os.path
 
 
@@ -31,7 +33,7 @@ class ValidarMedicao:
         self.menu = self.tr(u'&Validar Medição')
 
         self.first_start = None
-        self.previous_tool = None
+        self.canvas = self.iface.mapCanvas()
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -40,6 +42,7 @@ class ValidarMedicao:
 
     def add_action(
         self,
+        tool,
         icon_path,
         text,
         callback,
@@ -54,6 +57,8 @@ class ValidarMedicao:
         action = QAction(icon, text, parent)
         action.triggered.connect(callback)
         action.setEnabled(enabled_flag)
+        action.setCheckable(True)
+        tool.setAction(action)
 
         if status_tip is not None:
             action.setStatusTip(status_tip)
@@ -75,21 +80,32 @@ class ValidarMedicao:
 
     def initGui(self):
         self.toolbar = self.iface.addToolBar("Validar Medição")
+        self.bacias_6 = BaciasCaptacao(self.iface, radius=6, border_color=QgsColorUtils.colorFromString("#7DF9FF"))
+        self.bacias_12= BaciasCaptacao(self.iface, radius=12, border_color=QgsColorUtils.colorFromString("#C70039"))
+        self.terracos = Terracos(self.iface)
         
         self.add_action(
+            self.bacias_6,
             ':/plugins/validar_medicao/resources/bacias_captacao_6.png',
             text=self.tr(u'Criar Bacia de 6m'),
-            callback=self.run_criar_bacia_6,
-            parent=self.iface.mainWindow())
+            callback=self.run_criar_bacia_6)
         
         self.add_action(
+            self.bacias_12,
             ':/plugins/validar_medicao/resources/bacias_captacao_12.png',
             text=self.tr(u'Criar Bacia de 12m'),
-            callback=self.run_criar_bacia_12,
-            parent=self.iface.mainWindow())
+            callback=self.run_criar_bacia_12)
+        
+        self.add_action(
+            self.terracos,
+            ':/plugins/validar_medicao/resources/terracos.png',
+            text=self.tr(u'Criar Terraço'),
+            callback=self.run_criar_terraco
+        )
+
+        self.toolbar.addSeparator()
 
         self.first_start = True
-
 
     def unload(self):
         for action in self.actions:
@@ -99,22 +115,14 @@ class ValidarMedicao:
         self.toolbar.deleteLater()
 
     def run_criar_bacia_6(self):
-        canvas = self.iface.mapCanvas()
-        self.previous_tool = canvas.mapTool()
-        self.current_tool = BaciasCaptacao(self.iface,
-                                           canvas, 
-                                           radius=6, 
-                                           border_color=QgsColorUtils.colorFromString("#7DF9FF"))
-        canvas.setMapTool(self.current_tool)
-        QgsMessageLog.logMessage("Bacias de Captação com 6m de raio ativada.", "Validar Medição", level=Qgis.Info)
+        self.canvas.setMapTool(self.bacias_6)
+        QgsMessageLog.logMessage("Criar Bacias de Captação com 6m de raio ativada.", "Validar Medição", level=Qgis.Info)
  
     def run_criar_bacia_12(self):
-        canvas = self.iface.mapCanvas()
-        self.previous_tool = canvas.mapTool()
-        self.current_tool = BaciasCaptacao(self.iface,
-                                           canvas, 
-                                           radius=12, 
-                                           border_color=QgsColorUtils.colorFromString("#C70039"))
-        canvas.setMapTool(self.current_tool)
-        QgsMessageLog.logMessage("Bacias de Captação com 12m de raio ativada.", "Validar Medição", level=Qgis.Info)
+        self.canvas.setMapTool(self.bacias_12)
+        QgsMessageLog.logMessage("Criar Bacias de Captação com 12m de raio ativada.", "Validar Medição", level=Qgis.Info)
+    
+    def run_criar_terraco(self):
+        self.canvas.setMapTool(self.terracos)
+        QgsMessageLog.logMessage("Criar Terraços ativada.", "Validar Medição", level=Qgis.Info)
 
