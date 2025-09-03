@@ -26,7 +26,6 @@ class Terracos(QgsMapTool):
 
     def activate(self):
         self.canvas.setCursor(Qt.CrossCursor)
-        self.canvas.currentLayerChanged.connect(self.checkLayer)
     
     def canvasPressEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -90,7 +89,6 @@ class Terracos(QgsMapTool):
         self.clean()
         self.rubberBand.hide()
         self.action().setChecked(False)
-        self.canvas.currentLayerChanged.disconnect(self.checkLayer)
         QgsMapToolEmitPoint.deactivate(self)
         self.printMessage(f"Criar Terraços desativada.", level=Qgis.MessageLevel.Info)
     
@@ -136,4 +134,4 @@ class Terracos(QgsMapTool):
     def printMessage(self, message, push=False, level=Qgis.MessageLevel.Warning):
         QgsMessageLog.logMessage(str(message), "Validar Medição", level)
         if push:
-            self.iface.messageBar().pushMessage("Validar Medição", str(message), level=level, duration=5)
+            self.iface.messageBar().pushMessage("Criar terraço", str(message), level=level, duration=5)

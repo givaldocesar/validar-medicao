@@ -20,7 +20,6 @@ class BaciasCaptacao(QgsMapToolEmitPoint):
     
     def activate(self):
         self.setCursor(Qt.CrossCursor)
-        self.canvas.currentLayerChanged.connect(self.checkLayer)
     
     def canvasMoveEvent(self, event):
         self.active_layer = self.canvas.currentLayer()
@@ -82,7 +81,6 @@ class BaciasCaptacao(QgsMapToolEmitPoint):
 
     def deactivate(self):
         self.clean()
-        self.canvas.currentLayerChanged.disconnect(self.checkLayer)
         QgsMapToolEmitPoint.deactivate(self)
         self.printMessage(f"Criar Bacias de Captação com {self.radius}m de raio desativada.", level=Qgis.MessageLevel.Info)
     
@@ -118,4 +116,4 @@ class BaciasCaptacao(QgsMapToolEmitPoint):
     def printMessage(self, message, push=False, level=Qgis.MessageLevel.Warning):
         QgsMessageLog.logMessage(str(message), "Validar Medição", level)
         if push:
-            self.iface.messageBar().pushMessage("Validar Medição", str(message), level=level, duration=5)
+            self.iface.messageBar().pushMessage("Criar bacia de captação", str(message), level=level, duration=5)

@@ -3,5 +3,6 @@
         <file>resources/bacias_captacao_6.png</file>
         <file>resources/bacias_captacao_12.png</file>
         <file>resources/terracos.png</file>
+        <file>resources/3Dview.png</file>
     </qresource>
 </RCC>

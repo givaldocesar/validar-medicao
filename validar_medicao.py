@@ -4,12 +4,11 @@ from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
 from qgis.core import Qgis, QgsMessageLog, QgsColorUtils
-from qgis.gui import QgsMapToolEmitPoint
 
 from .resources import *
-from .validar_medicao_dialog import ValidarMedicaoDialog
 from .tools.bacias_captacao import BaciasCaptacao
 from .tools.terracos import Terracos
+from .tools.bacias_3DView import bacias_3DView
 import os.path
 
 
@@ -83,6 +82,7 @@ class ValidarMedicao:
         self.bacias_6 = BaciasCaptacao(self.iface, radius=6, border_color=QgsColorUtils.colorFromString("#7DF9FF"))
         self.bacias_12= BaciasCaptacao(self.iface, radius=12, border_color=QgsColorUtils.colorFromString("#C70039"))
         self.terracos = Terracos(self.iface)
+        self.bacias_3DView = bacias_3DView(self.iface)
         
         self.add_action(
             self.bacias_6,
@@ -105,6 +105,14 @@ class ValidarMedicao:
 
         self.toolbar.addSeparator()
 
+        self.bacias_3DView.addComboBox(self.toolbar)
+        self.add_action(
+            self.bacias_3DView,
+            ':/plugins/validar_medicao/resources/3Dview.png',
+            text=self.tr(u'Criar 3D de bacia de captação'),
+            callback=self.run_criar_3DView
+        )
+
         self.first_start = True
 
     def unload(self):
@@ -125,4 +133,8 @@ class ValidarMedicao:
     def run_criar_terraco(self):
         self.canvas.setMapTool(self.terracos)
         QgsMessageLog.logMessage("Criar Terraços ativada.", "Validar Medição", level=Qgis.Info)
+    
+    def run_criar_3DView(self):
+        self.canvas.setMapTool(self.bacias_3DView)
+        QgsMessageLog.logMessage("Criar 3D de bacia de captação ativada.", "Validar Medição", level=Qgis.Info)
 
