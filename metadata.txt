@@ -6,7 +6,7 @@
 name=Validar Medição
 qgisMinimumVersion=3.30
 description=Valida medições de bacias de captação e terraços executados pela CODEVASF 1SR
-version=0.4
+version=1.0.0
 author=Givaldo Cavalcanti
 email=givaldo.junior@codevasf.gov.br
 
@@ -21,13 +21,15 @@ repository=https://github.com/givaldocesar/validar-medicao.git
 hasProcessingProvider=no
 # Uncomment the following line and add your changelog:
 changelog=
-    0.4 2025-07-29
-      * fix bug and add create 'terraceamento'
-    0.3 2025-07-01
-      * manage invalid layers e fix geographic crs
+    1.0.0
+        * add 3D view
+    0.4.0 2025-07-29
+        * fix bug and add create 'terraceamento'
+    0.3.0 2025-07-01
+        * manage invalid layers e fix geographic crs
     
-    0.2 2025-06-30
-      * fix add feat bug and cancel command
+    0.2.0 2025-06-30
+        * fix add feat bug and cancel command
 
 
 # Tags are comma separated with spaces allowed
