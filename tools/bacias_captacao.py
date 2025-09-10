@@ -6,7 +6,7 @@ DIAMETRO = "diametro"
 FIELD = QgsField(DIAMETRO, QMetaType.Int)
 
 class BaciasCaptacao(QgsMapToolEmitPoint):
-    def __init__(self, iface, radius=6, border_color=Qt.red):
+    def __init__(self, iface, radius, border_color):
         self.iface = iface
         self.canvas = iface.mapCanvas()
         super().__init__(self.canvas)
@@ -46,7 +46,10 @@ class BaciasCaptacao(QgsMapToolEmitPoint):
         
         elif event.button() == Qt.RightButton:
             self.canvas.unsetMapTool(self)
-            
+
+    def setRadius(self, value):
+        self.radius = value
+
     def checkLayer(self, layer):
         isValid = True
 
@@ -82,7 +85,7 @@ class BaciasCaptacao(QgsMapToolEmitPoint):
     def deactivate(self):
         self.clean()
         QgsMapToolEmitPoint.deactivate(self)
-        self.printMessage(f"Criar Bacias de Captação com {self.radius}m de raio desativada.", level=Qgis.MessageLevel.Info)
+        self.printMessage(f"Criar Bacias de Captação com {self.radius*2}m de diâmetro desativada.", level=Qgis.MessageLevel.Info)
     
     def insert(self):
         self.active_layer = self.canvas.currentLayer()

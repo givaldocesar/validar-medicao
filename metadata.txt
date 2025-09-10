@@ -4,9 +4,9 @@
 
 [general]
 name=Validar Medição
-qgisMinimumVersion=3.30
+qgisMinimumVersion=3.40
 description=Valida medições de bacias de captação e terraços executados pela CODEVASF 1SR
-version=1.0.0
+version=1.1.0
 author=Givaldo Cavalcanti
 email=givaldo.junior@codevasf.gov.br
 
@@ -21,6 +21,8 @@ repository=https://github.com/givaldocesar/validar-medicao.git
 hasProcessingProvider=no
 # Uncomment the following line and add your changelog:
 changelog=
+    1.1.0
+        * add custom 'bacias de captação'
     1.0.0
         * add 3D view
     0.4.0 2025-07-29

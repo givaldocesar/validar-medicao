@@ -1,5 +1,5 @@
 from qgis.gui import QgsMapTool, QgsRubberBand, QgsMapToolEmitPoint
-from qgis.core import Qgis, QgsProject, QgsMapLayer, QgsMessageLog, QgsField, QgsFeature, QgsGeometry, QgsDistanceArea
+from qgis.core import Qgis, QgsMapLayer, QgsMessageLog, QgsField, QgsFeature, QgsGeometry, QgsDistanceArea
 from PyQt5.QtGui import QColor
 from PyQt5.QtCore import Qt, QMetaType
 

@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt
+from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
 from qgis.core import Qgis, QgsMessageLog, QgsColorUtils
 
 from .resources import *
 from .tools.bacias_captacao import BaciasCaptacao
+from .tools.bacias_captacao_custom_radius import BaciasCaptacaoCustomRadius
 from .tools.terracos import Terracos
 from .tools.bacias_3DView import bacias_3DView
 import os.path
@@ -81,19 +82,20 @@ class ValidarMedicao:
         self.toolbar = self.iface.addToolBar("Validar Medição")
         self.bacias_6 = BaciasCaptacao(self.iface, radius=6, border_color=QgsColorUtils.colorFromString("#7DF9FF"))
         self.bacias_12= BaciasCaptacao(self.iface, radius=12, border_color=QgsColorUtils.colorFromString("#C70039"))
+        self.bacias_custom_radius = BaciasCaptacaoCustomRadius(self.iface)
         self.terracos = Terracos(self.iface)
         self.bacias_3DView = bacias_3DView(self.iface)
         
         self.add_action(
             self.bacias_6,
             ':/plugins/validar_medicao/resources/bacias_captacao_6.png',
-            text=self.tr(u'Criar Bacia de 6m'),
+            text=self.tr(u'Criar Bacia de 12m'),
             callback=self.run_criar_bacia_6)
         
         self.add_action(
             self.bacias_12,
             ':/plugins/validar_medicao/resources/bacias_captacao_12.png',
-            text=self.tr(u'Criar Bacia de 12m'),
+            text=self.tr(u'Criar Bacia de 24m'),
             callback=self.run_criar_bacia_12)
         
         self.add_action(
@@ -105,13 +107,23 @@ class ValidarMedicao:
 
         self.toolbar.addSeparator()
 
-        self.bacias_3DView.addComboBox(self.toolbar)
+        self.add_action(
+            self.bacias_custom_radius,
+            ':/plugins/validar_medicao/resources/bacias_captacao_custom.png',
+            text=self.tr(u'Criar Bacia Customizada'),
+            callback=self.run_criar_bacia_customizada
+        )
+        self.bacias_custom_radius.addComboBox(self.toolbar)
+
+        self.toolbar.addSeparator()
+
         self.add_action(
             self.bacias_3DView,
             ':/plugins/validar_medicao/resources/3Dview.png',
             text=self.tr(u'Criar 3D de bacia de captação'),
             callback=self.run_criar_3DView
         )
+        self.bacias_3DView.addComboBox(self.toolbar)
 
         self.first_start = True
 
@@ -124,11 +136,15 @@ class ValidarMedicao:
 
     def run_criar_bacia_6(self):
         self.canvas.setMapTool(self.bacias_6)
-        QgsMessageLog.logMessage("Criar Bacias de Captação com 6m de raio ativada.", "Validar Medição", level=Qgis.Info)
+        QgsMessageLog.logMessage("Criar Bacias de Captação com 12m de diâmetro ativada.", "Validar Medição", level=Qgis.Info)
  
     def run_criar_bacia_12(self):
         self.canvas.setMapTool(self.bacias_12)
-        QgsMessageLog.logMessage("Criar Bacias de Captação com 12m de raio ativada.", "Validar Medição", level=Qgis.Info)
+        QgsMessageLog.logMessage("Criar Bacias de Captação com 24m de diâmetro ativada.", "Validar Medição", level=Qgis.Info)
+
+    def run_criar_bacia_customizada(self):
+        self.canvas.setMapTool(self.bacias_custom_radius)
+        QgsMessageLog.logMessage("Criar Bacias de Captação com diametro customizado ativada.", "Validar Medição", level=Qgis.Info)
     
     def run_criar_terraco(self):
         self.canvas.setMapTool(self.terracos)
