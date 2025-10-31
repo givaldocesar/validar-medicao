@@ -1,6 +1,6 @@
 from qgis.gui import QgsMapToolEmitPoint, QgsRubberBand
 from qgis.core import Qgis, QgsMapLayer, QgsGeometry, QgsField, QgsFeature, QgsMessageLog
-from PyQt5.QtCore import Qt, QMetaType
+from qgis.PyQt.QtCore import Qt, QMetaType
 
 DIAMETRO = "diametro"
 FIELD = QgsField(DIAMETRO, QMetaType.Int)

@@ -1,7 +1,7 @@
 from qgis.gui import QgsMapTool, QgsRubberBand, QgsMapToolEmitPoint
 from qgis.core import Qgis, QgsMapLayer, QgsMessageLog, QgsField, QgsFeature, QgsGeometry, QgsDistanceArea
-from PyQt5.QtGui import QColor
-from PyQt5.QtCore import Qt, QMetaType
+from qgis.PyQt.QtGui import QColor
+from qgis.PyQt.QtCore import Qt, QMetaType
 
 COMPRIMENTO = "comprimento"
 FIELD = QgsField(COMPRIMENTO, QMetaType.Double)

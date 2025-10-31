@@ -9,6 +9,7 @@ from .resources import *
 from .tools.bacias_captacao import BaciasCaptacao
 from .tools.bacias_captacao_custom_radius import BaciasCaptacaoCustomRadius
 from .tools.terracos import Terracos
+from .tools.criar_raster_virtual import CriarRasterVirtual
 from .tools.bacias_3DView import bacias_3DView
 import os.path
 
@@ -80,22 +81,25 @@ class ValidarMedicao:
 
     def initGui(self):
         self.toolbar = self.iface.addToolBar("Validar Medição")
+
+        #CRIA AS FUNÇÕES QUE EXECUTAM AS AÇÕES
         self.bacias_6 = BaciasCaptacao(self.iface, radius=6, border_color=QgsColorUtils.colorFromString("#7DF9FF"))
         self.bacias_12= BaciasCaptacao(self.iface, radius=12, border_color=QgsColorUtils.colorFromString("#C70039"))
         self.bacias_custom_radius = BaciasCaptacaoCustomRadius(self.iface)
         self.terracos = Terracos(self.iface)
+        self.criar_raster_virtual = CriarRasterVirtual(self.iface)
         self.bacias_3DView = bacias_3DView(self.iface)
         
         self.add_action(
             self.bacias_6,
             ':/plugins/validar_medicao/resources/bacias_captacao_6.png',
-            text=self.tr(u'Criar Bacia de 12m'),
+            text=self.tr(u'Criar Bacia com 12m de diâmetro'),
             callback=self.run_criar_bacia_6)
         
         self.add_action(
             self.bacias_12,
             ':/plugins/validar_medicao/resources/bacias_captacao_12.png',
-            text=self.tr(u'Criar Bacia de 24m'),
+            text=self.tr(u'Criar Bacia com 24m de diâmetro'),
             callback=self.run_criar_bacia_12)
         
         self.add_action(
@@ -118,6 +122,15 @@ class ValidarMedicao:
         self.toolbar.addSeparator()
 
         self.add_action(
+            self.criar_raster_virtual,
+            ':/plugins/validar_medicao/resources/virtual_raster.png',
+            text=self.tr(u'Criar Raster Virtual'),
+            callback=self.run_criar_raster_virtual
+        )
+
+        self.toolbar.addSeparator()
+
+        self.add_action(
             self.bacias_3DView,
             ':/plugins/validar_medicao/resources/3Dview.png',
             text=self.tr(u'Criar 3D de bacia de captação'),
@@ -134,23 +147,30 @@ class ValidarMedicao:
         
         self.toolbar.deleteLater()
 
+    def log(self, message, level=Qgis.Info):
+        QgsMessageLog.logMessage(message, "Validar Medição", level)
+
     def run_criar_bacia_6(self):
         self.canvas.setMapTool(self.bacias_6)
-        QgsMessageLog.logMessage("Criar Bacias de Captação com 12m de diâmetro ativada.", "Validar Medição", level=Qgis.Info)
+        self.log("Criar Bacias de Captação com 12m de diâmetro ativada.")
  
     def run_criar_bacia_12(self):
         self.canvas.setMapTool(self.bacias_12)
-        QgsMessageLog.logMessage("Criar Bacias de Captação com 24m de diâmetro ativada.", "Validar Medição", level=Qgis.Info)
+        self.log("Criar Bacias de Captação com 24m de diâmetro ativada.")
 
     def run_criar_bacia_customizada(self):
         self.canvas.setMapTool(self.bacias_custom_radius)
-        QgsMessageLog.logMessage("Criar Bacias de Captação com diametro customizado ativada.", "Validar Medição", level=Qgis.Info)
+        self.log("Criar Bacias de Captação com diametro customizado ativada.")
     
     def run_criar_terraco(self):
         self.canvas.setMapTool(self.terracos)
-        QgsMessageLog.logMessage("Criar Terraços ativada.", "Validar Medição", level=Qgis.Info)
+        self.log("Criar Terraços ativada.")
+
+    def run_criar_raster_virtual(self):
+        self.log("Criar Raster Virtual ativada.")
+        self.criar_raster_virtual.criar()
     
     def run_criar_3DView(self):
         self.canvas.setMapTool(self.bacias_3DView)
-        QgsMessageLog.logMessage("Criar 3D de bacia de captação ativada.", "Validar Medição", level=Qgis.Info)
+        self.log("Criar 3D de bacia de captação ativada.")
 

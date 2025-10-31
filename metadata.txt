@@ -21,6 +21,8 @@ repository=https://github.com/givaldocesar/validar-medicao.git
 hasProcessingProvider=no
 # Uncomment the following line and add your changelog:
 changelog=
+    1.2.0
+        * add create virtual raster / minor fixes
     1.1.0
         * add custom 'bacias de captação'
     1.0.0
