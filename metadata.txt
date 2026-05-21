@@ -33,7 +33,6 @@ changelog=
         * fix bug and add create 'terraceamento'
     0.3.0 2025-07-01
         * manage invalid layers e fix geographic crs
-    
     0.2.0 2025-06-30
         * fix add feat bug and cancel command
 
