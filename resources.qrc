@@ -6,5 +6,6 @@
         <file>resources/bacias_captacao_custom.png</file>
         <file>resources/terracos.png</file>
         <file>resources/virtual_raster.png</file>
+        <file>resources/mapserver.png</file>
     </qresource>
 </RCC>

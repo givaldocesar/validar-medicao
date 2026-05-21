@@ -6,11 +6,7 @@ from qgis.PyQt.QtWidgets import QAction
 from qgis.core import Qgis, QgsMessageLog, QgsColorUtils
 
 from .resources import *
-from .tools.bacias_captacao import BaciasCaptacao
-from .tools.bacias_captacao_custom_radius import BaciasCaptacaoCustomRadius
-from .tools.terracos import Terracos
-from .tools.criar_raster_virtual import CriarRasterVirtual
-from .tools.bacias_3DView import bacias_3DView
+from .tools import *
 import os.path
 
 
@@ -59,7 +55,9 @@ class ValidarMedicao:
         action.triggered.connect(callback)
         action.setEnabled(enabled_flag)
         action.setCheckable(True)
-        tool.setAction(action)
+        
+        if hasattr(tool, 'setAction'):
+            tool.setAction(action)
 
         if status_tip is not None:
             action.setStatusTip(status_tip)
@@ -88,7 +86,8 @@ class ValidarMedicao:
         self.bacias_custom_radius = BaciasCaptacaoCustomRadius(self.iface)
         self.terracos = Terracos(self.iface)
         self.criar_raster_virtual = CriarRasterVirtual(self.iface)
-        self.bacias_3DView = bacias_3DView(self.iface)
+        self.iniciar_map_server = IniciarMapServer(self.iface)
+        #self.bacias_3DView = bacias_3DView(self.iface)
         
         self.add_action(
             self.bacias_6,
@@ -128,15 +127,22 @@ class ValidarMedicao:
             callback=self.run_criar_raster_virtual
         )
 
+        self.add_action(
+            self.iniciar_map_server,
+            ':/plugins/validar_medicao/resources/mapserver.png',
+            text=self.tr(u'Iniciar Servidor de Aerolevantamentos'),
+            callback=self.run_iniciar_map_server
+        )
+
         self.toolbar.addSeparator()
 
-        self.add_action(
-            self.bacias_3DView,
-            ':/plugins/validar_medicao/resources/3Dview.png',
-            text=self.tr(u'Criar 3D de bacia de captação'),
-            callback=self.run_criar_3DView
-        )
-        self.bacias_3DView.addComboBox(self.toolbar)
+        # self.add_action(
+        #     self.bacias_3DView,
+        #     ':/plugins/validar_medicao/resources/3Dview.png',
+        #     text=self.tr(u'Criar 3D de bacia de captação'),
+        #     callback=self.run_criar_3DView
+        # )
+        # self.bacias_3DView.addComboBox(self.toolbar)
 
         self.first_start = True
 
@@ -169,6 +175,10 @@ class ValidarMedicao:
     def run_criar_raster_virtual(self):
         self.log("Criar Raster Virtual ativada.")
         self.criar_raster_virtual.criar()
+
+    def run_iniciar_map_server(self):
+        self.log("Tentando iniciar o map server...")
+        self.iniciar_map_server.init_setup()
     
     def run_criar_3DView(self):
         self.canvas.setMapTool(self.bacias_3DView)
