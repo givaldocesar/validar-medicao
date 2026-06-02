@@ -1,1 +1,2 @@
-from .iniciar_map_server import *
+from .map_server import *
+from .map_config_dialog import *

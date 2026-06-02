@@ -7,5 +7,6 @@
         <file>resources/terracos.png</file>
         <file>resources/virtual_raster.png</file>
         <file>resources/mapserver.png</file>
+        <file>resources/mapserver_settings.png</file>
     </qresource>
 </RCC>

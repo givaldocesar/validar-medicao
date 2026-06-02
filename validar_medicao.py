@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import os.path
+
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
@@ -7,7 +9,6 @@ from qgis.core import Qgis, QgsMessageLog, QgsColorUtils
 
 from .resources import *
 from .tools import *
-import os.path
 
 
 class ValidarMedicao:
@@ -43,6 +44,7 @@ class ValidarMedicao:
         icon_path,
         text,
         callback,
+        checkable=True,
         enabled_flag=True,
         add_to_menu=True,
         add_to_toolbar=True,
@@ -54,7 +56,7 @@ class ValidarMedicao:
         action = QAction(icon, text, parent)
         action.triggered.connect(callback)
         action.setEnabled(enabled_flag)
-        action.setCheckable(True)
+        action.setCheckable(checkable)
         
         if hasattr(tool, 'setAction'):
             tool.setAction(action)
@@ -86,7 +88,8 @@ class ValidarMedicao:
         self.bacias_custom_radius = BaciasCaptacaoCustomRadius(self.iface)
         self.terracos = Terracos(self.iface)
         self.criar_raster_virtual = CriarRasterVirtual(self.iface)
-        self.iniciar_map_server = IniciarMapServer(self.iface)
+        self.map_server = MapServer(self.iface, self.tr)
+        self.mapserv_config = ConfigMapServerDialog(self.map_server, self.iface.mainWindow())
         #self.bacias_3DView = bacias_3DView(self.iface)
         
         self.add_action(
@@ -124,14 +127,24 @@ class ValidarMedicao:
             self.criar_raster_virtual,
             ':/plugins/validar_medicao/resources/virtual_raster.png',
             text=self.tr(u'Criar Raster Virtual'),
-            callback=self.run_criar_raster_virtual
+            callback=self.run_criar_raster_virtual,
+            checkable=False
         )
 
         self.add_action(
-            self.iniciar_map_server,
+            self.map_server,
             ':/plugins/validar_medicao/resources/mapserver.png',
             text=self.tr(u'Iniciar Servidor de Aerolevantamentos'),
-            callback=self.run_iniciar_map_server
+            callback=self.run_iniciar_map_server,
+            checkable=False
+        )
+
+        self.add_action(
+            self.mapserv_config,
+            ':/plugins/validar_medicao/resources/mapserver_settings.png',
+            text=self.tr(u'Configurar Servidor de Aerolevantamentos'),
+            callback=self.run_iniciar_map_server_config,
+            checkable=False
         )
 
         self.toolbar.addSeparator()
@@ -178,7 +191,10 @@ class ValidarMedicao:
 
     def run_iniciar_map_server(self):
         self.log("Tentando iniciar o map server...")
-        self.iniciar_map_server.init_setup()
+        self.map_server.init_setup()
+    
+    def run_iniciar_map_server_config(self):
+        self.mapserv_config.exec_()
     
     def run_criar_3DView(self):
         self.canvas.setMapTool(self.bacias_3DView)
