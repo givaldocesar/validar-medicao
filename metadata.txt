@@ -5,12 +5,11 @@
 [general]
 name=Validar Medição
 qgisMinimumVersion=3.40
-description=Valida medições de bacias de captação e terraços executados pela CODEVASF 1SR
 version=1.3.1
 author=Givaldo Cavalcanti
 email=givaldo.junior@codevasf.gov.br
-
-about=Plugin criado para otimizar a validação das bacias de captação e terraços medidos com o uso de drones.
+description=Validates catch basins and terraces measurements executed by CODEVASF using drone imagery. Includes a local WMS MapServer.
+about=Plugin created to optimize the validation of catch basins and terraces measured using drones. From version 1.3.0, it features a built-in local MapServer (WMS) engine to instantly render heavy orthomosaics and Digital Elevation Models (DEM/DSM) locally without freezing QGIS.
 
 tracker=https://github.com/givaldocesar/validar-medicao.git
 repository=https://github.com/givaldocesar/validar-medicao.git
