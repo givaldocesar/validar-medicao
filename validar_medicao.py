@@ -6,10 +6,11 @@ from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
 from qgis.core import Qgis, QgsMessageLog, QgsColorUtils
-
 from .resources import *
-from .tools import *
-
+from .tools import (
+    BaciasCaptacao, BaciasCaptacaoCustomRadius, Terracos, CriarRasterVirtual, MapServer,
+    ConfigMapServerDialog, Bacias_3DView
+)
 
 class ValidarMedicao:
 

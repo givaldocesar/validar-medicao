@@ -7,7 +7,7 @@ from qgis.PyQt.QtWidgets import QLabel
 from .bacias_3DView_dialog import Model3DDialog
 from .utils import printMessage
 
-class bacias_3DView(QgsMapToolIdentify):
+class Bacias_3DView(QgsMapToolIdentify):
     def __init__(self, iface):
         self.iface = iface
         self.canvas = iface.mapCanvas()
