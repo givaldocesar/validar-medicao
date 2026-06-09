@@ -172,9 +172,10 @@ END
         project = QgsProject.instance()
         root = project.layerTreeRoot()
         groups_dict = {}
-        cb = int(time.time())
 
-        for name, title, group_name in layers:
+        for idx, (name, title, group_name) in enumerate(layers):
+            cb = f"{idx}_{int(time.time())}"
+            
             uri = (
                 f"url=http://localhost:8080/mapserv.exe?map=AEROLEVANTAMENTOS&_={cb}&"
                 f"crs=EPSG:31983&format=image/png&layers={name}&styles=&"
@@ -196,7 +197,7 @@ END
                         groups_dict[legend] = root.addGroup(legend)
                     
                 #VERIFICA SE A CAMADA JÁ TÁ LÁ
-                for node in  groups_dict[legend].children():
+                for node in  list(groups_dict[legend].children()):
                     if node.name() == title:
                         project.removeMapLayer(node.layerId())
 
