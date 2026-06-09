@@ -81,8 +81,18 @@ END
                     clean_name = f"{product_type.replace(" ", "_")}_{sub_directory.replace(" ", "_")}"
                     
                     vrt_path = os.path.join(path, f"mosaic_{clean_name}.vrt").replace("\\", "/")
-                    vrt_options = gdal.BuildVRTOptions(resolution="highest")
-                    gdal.BuildVRT(vrt_path, images, options=vrt_options)
+
+                    need_rebuild = True
+                    if os.path.exists(vrt_path):
+                        vrt_age = os.path.getmtime(vrt_path)
+                        newest_image_age = max(os.path.getmtime(img) for img in images)
+                        if vrt_age > newest_image_age:
+                            # A imagem mais nova é mais velha que o raster virtual
+                            need_rebuild = False
+
+                    if need_rebuild:
+                        vrt_options = gdal.BuildVRTOptions(resolution="highest")
+                        gdal.BuildVRT(vrt_path, images, options=vrt_options)
 
                     layers.append((clean_name, clean_title, group_name))
                     layer_blocks += create_layer(clean_name, vrt_path, clean_title, group_name, product_type)
