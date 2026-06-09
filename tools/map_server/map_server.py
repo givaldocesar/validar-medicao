@@ -1,4 +1,4 @@
-import os, threading, traceback, re
+import os, time, threading, traceback, re
 from http.server import ThreadingHTTPServer
 from osgeo import gdal
 from qgis.core import QgsApplication, Qgis, QgsProject, QgsRasterLayer, QgsSettings, QgsMessageLog
@@ -69,7 +69,7 @@ END
 
                 for root, _, files in os.walk(path):
                     for file in files:
-                        if file.lower().endswith('.tif'):
+                        if file.lower().endswith(('.tif', '.cog')):
                            images.append(os.path.join(root, file).replace("\\", "/"))
                 
                 if images:
@@ -145,7 +145,8 @@ END
         QTimer.singleShot(1000, restart)
 
     def create_wms_connection(self):
-        url = f"http://localhost:8080/mapserv.exe?map=AEROLEVANTAMENTOS"
+        cb = int(time.time())
+        url = f"http://localhost:8080/mapserv.exe?map=AEROLEVANTAMENTOS&_={cb}"
         connection = "Aerolevantamentos (CODEVASF)"
         
         settings = QgsSettings()
@@ -161,12 +162,14 @@ END
         project = QgsProject.instance()
         root = project.layerTreeRoot()
         groups_dict = {}
+        cb = int(time.time())
 
         for name, title, group_name in layers:
             uri = (
+                f"url=http://localhost:8080/mapserv.exe?map=AEROLEVANTAMENTOS&_={cb}&"
                 f"crs=EPSG:31983&format=image/png&layers={name}&styles=&"
-                f"url=http://localhost:8080/?map=AEROLEVANTAMENTOS&"
-                f"ignoreGetMapURI=1&ignoreGetFeatureInfoURI=1&version=1.1.1"
+                f"ignoreGetMapURI=1&ignoreGetFeatureInfoURI=1&version=1.1.1&"
+                f"featureInfoFormat=text/plain"
             )
 
             wms_layer = QgsRasterLayer(uri, title, "wms")
