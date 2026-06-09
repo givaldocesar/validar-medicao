@@ -30,7 +30,10 @@ class MapServer:
         self.progress_dialog.show()
 
     def create_map_conf(self):
-        conf_path = os.path.join(self.directory, "mapserv.conf")
+        conf_path = os.path.join(self.directory, "mapserv.conf").replace("\\", "/")
+        map_path = os.path.join(self.directory, "config.map").replace("\\", "/")
+        ms_error_path = os.path.join(self.directory, "ms_error.txt").replace("\\", "/")
+        gdal_log_path = os.path.join(self.directory, "ms_gdal_log.txt").replace("\\", "/")
         proj_lib, gdal_data = get_global_proj_gdal()
 
         conf_content = f"""CONFIG
@@ -39,9 +42,15 @@ class MapServer:
         PROJ_LIB "{proj_lib}"
         PROJ_DATA "{proj_lib}"
         GDAL_DATA "{gdal_data}"
+
+        #--- DEBUG ---
+        MS_ERRORFILE "{ms_error_path}"
+        CPL_LOG "{gdal_log_path}"
+        MS_DEBUGLEVEL "5"
+        CPL_DEBUG "ON"
     END
     MAPS
-        AEROLEVANTAMENTOS "config.map" 
+        AEROLEVANTAMENTOS "{map_path}" 
     END
 END
 """
@@ -49,6 +58,8 @@ END
                 f.write(conf_content)
         
         os.environ['MAPSERVER_CONFIG_FILE'] = conf_path
+        os.environ['MS_ERRORFILE'] = ms_error_path
+        os.environ['MS_DEBUGLEVEL'] = "5"
 
     def create_map_file(self, configs, map_file):
         self.iface.messageBar().pushMessage(MESSAGE_TITLE, "Lendo arquivos nos diretórios selecionados...", level=Qgis.Info)

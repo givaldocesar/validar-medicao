@@ -14,12 +14,22 @@ def create_map_handler(mapserver_dir_path, proj_lib, gdal_data):
 
             #ENVIRONMENT
             env = os.environ.copy()
+            if 'PROJ_LIB' in env: del env['PROJ_LIB']
+            if 'GDAL_DATA' in env: del env['GDAL_DATA']
+
             env['QUERY_STRING'] = query_string
             env['REQUEST_METHOD'] = 'GET'
-            env['MAPSERVER_CONFIG_FILE'] = "mapserv.conf"
+            env['MAPSERVER_CONFIG_FILE'] = os.path.join(mapserver_dir_path, "mapserv.conf").replace("\\", "/")
             env['CPL_DEBUG'] = 'ON'
             env['CPL_LOG'] = os.path.join(mapserver_dir_path, "ms_gdal_log.txt").replace("\\", "/")
-            env['PATH'] = mapserver_dir_path + os.pathsep + env.get('PATH', '')
+           
+            clean_path = []
+            for path in env.get('PATH', '').split(os.pathsep):
+                if 'qgis' not in path.lower() and 'osgeo4w' not in path.lower():
+                    clean_path.append(path)
+            
+            env['PATH'] = mapserver_dir_path + os.pathsep + os.pathsep.join(clean_path)
+            
             env['PROJ_LIB'] = proj_lib
             env['PROJ_DATA'] = proj_lib
             env['GDAL_DATA'] = gdal_data
@@ -32,14 +42,33 @@ def create_map_handler(mapserver_dir_path, proj_lib, gdal_data):
 
             #EXECUTION
             HIDE_CONSOLE = 0x08000000
-            proc = subprocess.run(
-                [exe_mapserver], 
-                env=env, 
-                capture_output=True, 
-                cwd=mapserver_dir_path, 
-                creationflags=HIDE_CONSOLE
-            )
+
+            try:
+                proc = subprocess.run(
+                    [exe_mapserver], 
+                    env=env, 
+                    capture_output=True, 
+                    cwd=mapserver_dir_path, 
+                    creationflags=HIDE_CONSOLE
+                )
+            except Exception as e:
+                print(f"\n[ERRO FATAL] O Python não conseguiu invocar o executável: {e}")
+                self.send_response(500)
+                self.end_headers()
+                return
+            
             raw_output = proc.stdout
+
+            if proc.returncode != 0 or len(raw_output) == 0:
+                print(f"\n{'='*50}")
+                print(f"CRASH DO MAPSERVER DETECTADO")
+                print(f"Código de Retorno (Return Code): {proc.returncode}")
+                print(f"Erro STDERR: {proc.stderr.decode('utf-8', errors='ignore')}")
+                print(f"Caminho Executável: {exe_mapserver}")
+                print(f"{'='*50}\n")
+
+                if proc.returncode in [-1073741515, 3221225781]:
+                    print(">>> DIAGNÓSTICO: Faltam DLLs no Windows <<<")
 
             if b'\r\n\r\n' in raw_output:
                 headers_raw, body = raw_output.split(b'\r\n\r\n', 1)
@@ -49,8 +78,8 @@ def create_map_handler(mapserver_dir_path, proj_lib, gdal_data):
                 headers_raw = b'Content-Type: text/plain'
                 body = raw_output + (proc.stderr if proc.stderr else b'')
 
-            if b'image' not in headers_raw.lower():
-                print(f"\n[ALERTA MAPSERVER] Resposta não foi uma imagem. Detalhes:\n{body.decode('utf-8', errors='ignore')[:1000]}\n")
+            if proc.returncode == 0 and b'image' not in headers_raw.lower():
+                print(f"\n[ALERTA MAPSERVER] Resposta inesperada. Detalhes:\n{body.decode('utf-8', errors='ignore')[:1000]}\n")
 
             self.send_response(200)
 
