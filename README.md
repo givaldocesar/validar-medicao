@@ -1,6 +1,6 @@
 # 🚁 Validar Medição - QGIS Plugin
 
-**Versão:** 1.4.0 | **QGIS Mínimo:** 3.40.3
+**Versão:** 1.4.1 | **QGIS Mínimo:** 3.40.3
 **Categoria:** Vector / Web / Raster Processing
 
 Plugin desenvolvido para otimizar a validação de bacias de captação e terraços executados pela CODEVASF, utilizando produtos de aerolevantamentos com drones (DJI Mavic 3 Enterprise, etc).

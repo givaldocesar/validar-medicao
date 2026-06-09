@@ -5,7 +5,7 @@
 [general]
 name=Validar Medição
 qgisMinimumVersion=3.40.3
-version=1.4.0
+version=1.4.1
 author=Givaldo Cavalcanti
 email=givaldo.junior@codevasf.gov.br
 description=Validates catch basins and terraces measurements executed by CODEVASF using drone imagery. Includes a local WMS MapServer.
