@@ -1,4 +1,4 @@
-import os, threading, traceback, re, time
+import os, threading, traceback, re
 from http.server import ThreadingHTTPServer
 from osgeo import gdal
 from qgis.core import QgsApplication, Qgis, QgsProject, QgsRasterLayer, QgsSettings, QgsMessageLog
@@ -33,15 +33,12 @@ class MapServer:
         conf_path = os.path.join(self.directory, "mapserv.conf")
         proj_lib, gdal_data = get_global_proj_gdal()
 
-        gdal_driver_path = self.directory.replace("\\", "/")
-
         conf_content = f"""CONFIG
     ENV
         MS_MAP_PATTERN ".*"
         PROJ_LIB "{proj_lib}"
         PROJ_DATA "{proj_lib}"
         GDAL_DATA "{gdal_data}"
-        GDAL_DRIVER_PATH "{gdal_driver_path}"
     END
     MAPS
         AEROLEVANTAMENTOS "config.map" 
@@ -61,8 +58,6 @@ END
 
         for product_type, product_dir in configs.items():
             if not product_dir or not os.path.exists(product_dir):
-                self.iface.messageBar().pushMessage(MESSAGE_TITLE, 
-                    f"{product_type}: O diretório '{product_dir}' é inválido ou não existe.", level=Qgis.Warning )
                 continue
 
             sub_directories = [directory for directory in os.listdir(product_dir) if os.path.isdir(os.path.join(product_dir, directory))]
@@ -74,7 +69,7 @@ END
 
                 for root, _, files in os.walk(path):
                     for file in files:
-                        if file.lower().endswith(('.ecw', '.tif')):
+                        if file.lower().endswith('.tif'):
                            images.append(os.path.join(root, file).replace("\\", "/"))
                 
                 if images:
@@ -90,7 +85,7 @@ END
                     gdal.BuildVRT(vrt_path, images, options=vrt_options)
 
                     layers.append((clean_name, clean_title, group_name))
-                    layer_blocks += create_layer(clean_name, vrt_path, clean_title, year, product_type)
+                    layer_blocks += create_layer(clean_name, vrt_path, clean_title, group_name, product_type)
 
         if layer_blocks:
             # CRIA O MAP CONFIG

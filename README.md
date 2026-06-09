@@ -1,52 +1,39 @@
-# Validar Medição - QGIS Plugin
+# 🚁 Validar Medição - QGIS Plugin
 
-**Versão:** 1.3.1 | **QGIS Mínimo:** 3.40
-**Categoria:** Vector / Web
+**Versão:** 1.4.0 | **QGIS Mínimo:** 3.40.3
+**Categoria:** Vector / Web / Raster Processing
 
-Plugin desenvolvido para otimizar a validação das bacias de captação e terraços executados pela CODEVASF, utilizando produtos de aerolevantamentos com drones. 
+Plugin desenvolvido para otimizar a validação de bacias de captação e terraços executados pela CODEVASF, utilizando produtos de aerolevantamentos com drones (DJI Mavic 3 Enterprise, etc).
 
-A partir da versão 1.3.0, o plugin introduz um **Servidor WMS Local** integrado (MapServer), projetado para processar e renderizar gigabytes de Ortofotos e Modelos Digitais de Elevação instantaneamente, sem sobrecarregar a memória do QGIS.
-
----
-
-## Principais Funcionalidades (Módulo MapServer)
-
-* **Motor WMS Independente:** O servidor roda em uma *thread* separada em segundo plano. O QGIS não trava durante o carregamento de imagens pesadas.
-* **Mosaicos Virtuais (VRT) Automáticos:** Varre diretórios na rede ou discos locais, detecta arquivos raster (`.tif`, `.ecw`) e constrói mosaicos de forma inteligente, organizados por ano e mês, caso os diretórios tenham essa informação no nome.
-* **Suporte Nativo a MDT/MDS:** Caso encontre imagens no diretórios selecionados para Modelos Digitais de Terreno e Superfície, aplica algoritmos de renderização (`SCALE=AUTO`), transformando dados de elevação em imagens visíveis instantaneamente.
-* **Configuração Persistente:** Utiliza a memória do próprio QGIS para salvar os caminhos de rede. Configure uma vez e a ferramenta nunca mais esquecerá.
-* **Injeção Dinâmica na Legenda:** Interface gráfica elegante para seleção das camadas, que são carregadas e organizadas automaticamente em grupos (pastas) na legenda do QGIS, prevenindo duplicidade de arquivos.
-
-*(O plugin também possui ferramentas exclusivas de desenho vetorial para geração automática de Bacias de Captação e Terraços, voltadas para fiscalização de obras).*
+A versão 1.4.0 transforma o plugin em uma esteira completa de processamento, introduzindo um conversor nativo de imagens COG (Cloud Optimized GeoTIFF) e um motor **WMS Local** (MapServer) integrado. Processe e renderize gigabytes de Ortofotos e Modelos Digitais de Elevação instantaneamente.
 
 ---
 
-A interface foi projetada para ser simples e "Plug and Play". Na barra de ferramentas do plugin, você encontrará os ícones de controle.
+## ✨ Principais Funcionalidades
 
-### 1. Configuração Inicial (Engrenagem ⚙️)
-Antes de ligar o servidor pela primeira vez, clique no ícone de Configurações.
-* Na aba **Diretórios de Imagens**, aponte as pastas raízes onde seus produtos estão armazenados (Ortofotos, MDT, MDS, Curvas de Nível). 
-* *Nota: O plugin ignora pastas deixadas em branco.*
-* Clique em **Salvar Configurações**.
+### ⚙️ 1. Pipeline de Otimização COG (Novo!)
+* **Fim da dependência de softwares externos:** Otimize arquivos TIF brutos de dezenas de gigabytes diretamente pelo QGIS.
+* **Processamento Seguro em Segundo Plano (Threads):** Barras de progresso duplas (por lote e por arquivo) mantêm você informado sem travar a interface do QGIS. Botão de interrupção de emergência incluído.
+* **Inteligência de Compressão:** Aplica automaticamente compressão JPEG (85%) para Ortofotos (foco no desempenho) e compressão Deflate (Lossless) para MDT/MDS, preservando a precisão altimétrica milimétrica.
+* **Organização Automática:** Lê a data de modificação dos voos e organiza os arquivos otimizados em pastas estruturadas (ex: `2025-JUNHO`).
 
-### 2. Iniciar o Servidor (Mapa 🗺️)
-Clique no ícone de Mapa na barra de ferramentas. O plugin irá:
-1. Verificar se já possui os arquivos do mapserver e bibliotecas python para utilização do servidor.
-2. Se não tiver, fará os downloads necessários.
-3. Rastrear todos os arquivos raster nas pastas configuradas.
-4. Agrupar os meses detectados.
-5. Ligar o motor MapServer local.
-6. Abrir uma janela para você selecionar quais meses deseja adicionar ao painel de camadas.
+### 🚀 2. Motor WMS Independente (MapServer)
+* **Mosaicos Virtuais (VRT) Automáticos:** Varre diretórios, detecta arquivos COG e constrói mosaicos de forma inteligente.
+* **Renderização de Terreno Nativa:** Detecta automaticamente Modelos Digitais de Elevação e aplica algoritmos de renderização instantânea (`SCALE=AUTO`).
+* **Consulta de Elevação via Clique (GetFeatureInfo):** Use a ferramenta "Informações de Feições" do QGIS para clicar em qualquer ponto do MDT/MDS renderizado e obter a altitude exata (ou valores RGB nas ortofotos).
+* **Injeção Dinâmica na Legenda:** As camadas são carregadas e organizadas automaticamente em grupos (pastas) na legenda do QGIS (ex: `[+] Ortofotos 2025`), prevenindo duplicidade.
 
-### 3. Gerenciamento do Servidor
-Dentro da aba de Configurações (Avançado), você tem total controle sobre o ciclo de vida do motor WMS, podendo **Iniciar**, **Parar (Stop)** a porta de rede ou **Reiniciar (Reboot)** o servidor em caso de inclusão de novas imagens nas pastas enquanto o QGIS estiver aberto.
+### 📐 3. Ferramentas Vetoriais para Fiscalização
+* Ferramentas exclusivas de desenho vetorial para geração automática de Bacias de Captação (12m, 24m ou raios customizados) e Terraços.
 
 ---
 
-## ⚠️ Limitações Conhecidas & Dicas
-* **Arquivos Suportados (WMS):** Atualmente, a varredura do motor WMS procura especificamente por rasters com extensão `.tif` e `.ecw`.
-* **Desempenho:** Recomendamos manter os arquivos pesados em um servidor robusto ou SSD local para maior fluidez do motor WMS.
-* **Segurança de Thread:** Nunca feche o terminal do MapServer à força. Utilize o botão nativo de "Stop" ou "Reboot" no painel de configurações para que o plugin libere a porta 8080 do Windows com segurança.
+## 🛠️ Como Usar o Fluxo de Aerolevantamentos
+
+1. **Importar e Otimizar:** Clique no ícone de "Importação" na barra de ferramentas. Aponte a pasta com os arquivos TIF brutos do drone, escolha o tipo de produto e deixe o plugin gerar os arquivos COG na pasta do servidor.
+2. **Configuração Inicial:** No ícone da Engrenagem ⚙️, aponte os diretórios raiz de cada produto.
+3. **Iniciar o Servidor:** Clique no ícone de Play ▶️. O motor WMS irá iniciar na porta `8080` e agrupar seus mosaicos automaticamente. Selecione as camadas desejadas para adicioná-las ao painel.
+4. **Fiscalizar:** Utilize a ferramenta de Informações (i) nativa do QGIS sobre a camada de MDT para extrair cotas de elevação instantaneamente.
 
 ---
 

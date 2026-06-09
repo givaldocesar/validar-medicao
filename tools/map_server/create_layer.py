@@ -11,9 +11,14 @@ def create_layer(name, vrt_path, title, group, product_type="ORTOFOTOS"):
         STATUS ON
         DATA "{vrt_path}"
         { processing_block }
+
+        TEMPLATE "dummy.html"
+
         METADATA
             "wms_title" "Mosaico {title}"
+            "wms_include_items" "all"
         END
+        
         PROJECTION
             "init=epsg:31983"
         END

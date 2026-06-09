@@ -95,6 +95,14 @@ class ConfigMapServerDialog(QDialog):
         arquivo_conf = os.path.join(self.server.directory, "mapserv.conf")
         btn_mapserv_conf.clicked.connect(lambda: os.startfile(arquivo_conf) if os.path.exists(arquivo_conf) else None)
 
+        btn_mapserv_error = QPushButton(self.tr("Abrir ms_error.txt"))
+        arquivo_error = os.path.join(self.server.directory, "ms_error.txt")
+        btn_mapserv_error.clicked.connect(lambda: os.startfile(arquivo_error) if os.path.exists(arquivo_error) else None)
+
+        btn_mapserv_gdal = QPushButton(self.tr("Abrir ms_gdal_log.txt"))
+        arquivo_gdal = os.path.join(self.server.directory, "ms_gdal_log.txt")
+        btn_mapserv_gdal.clicked.connect(lambda: os.startfile(arquivo_gdal) if os.path.exists(arquivo_gdal) else None)
+
         #BUTTONS PLAY/STOP/REBOOT
         play_button = QPushButton()
         play_button.setIcon(QgsApplication.getThemeIcon("/mActionPlay.svg"))
@@ -129,6 +137,8 @@ class ConfigMapServerDialog(QDialog):
         layout.addWidget(btn_mapserv_dir)
         layout.addWidget(btn_mapserv_mapconfig)
         layout.addWidget(btn_mapserv_conf)
+        layout.addWidget(btn_mapserv_error)
+        layout.addWidget(btn_mapserv_gdal)
         layout.addSpacing(25)
         layout.addWidget(buttons_label)
         layout.addLayout(buttons_layout)

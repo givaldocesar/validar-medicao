@@ -5,7 +5,7 @@
 [general]
 name=Validar Medição
 qgisMinimumVersion=3.40.3
-version=1.3.1
+version=1.4.0
 author=Givaldo Cavalcanti
 email=givaldo.junior@codevasf.gov.br
 description=Validates catch basins and terraces measurements executed by CODEVASF using drone imagery. Includes a local WMS MapServer.
@@ -20,6 +20,8 @@ repository=https://github.com/givaldocesar/validar-medicao.git
 hasProcessingProvider=no
 # Uncomment the following line and add your changelog:
 changelog=
+    1.4.0
+        * add convertion to COG images
     1.3.1
         * add mapserv debug & config
     1.3.0

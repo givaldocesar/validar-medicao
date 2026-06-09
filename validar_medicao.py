@@ -9,7 +9,7 @@ from qgis.core import Qgis, QgsMessageLog, QgsColorUtils
 from .resources import *
 from .tools import (
     BaciasCaptacao, BaciasCaptacaoCustomRadius, Terracos, CriarRasterVirtual, MapServer,
-    ConfigMapServerDialog, Bacias_3DView
+    ConfigMapServerDialog, ImportImagesDialog, Bacias_3DView
 )
 
 class ValidarMedicao:
@@ -89,8 +89,9 @@ class ValidarMedicao:
         self.bacias_custom_radius = BaciasCaptacaoCustomRadius(self.iface)
         self.terracos = Terracos(self.iface)
         self.criar_raster_virtual = CriarRasterVirtual(self.iface)
-        self.map_server = MapServer(self.iface, self.tr)
-        self.mapserv_config = ConfigMapServerDialog(self.map_server, self.iface.mainWindow())
+        self.mapserv = MapServer(self.iface, self.tr)
+        self.mapserv_import = ImportImagesDialog(self.iface, self.iface.mainWindow())
+        self.mapserv_config = ConfigMapServerDialog(self.mapserv, self.iface.mainWindow())
         #self.bacias_3DView = bacias_3DView(self.iface)
         
         self.add_action(
@@ -133,10 +134,18 @@ class ValidarMedicao:
         )
 
         self.add_action(
-            self.map_server,
+            self.mapserv,
             ':/plugins/validar_medicao/resources/mapserver.png',
             text=self.tr(u'Iniciar Servidor de Aerolevantamentos'),
             callback=self.run_iniciar_map_server,
+            checkable=False
+        )
+
+        self.add_action(
+            self.mapserv_import,
+            ':/plugins/validar_medicao/resources/mapserver_import.png',
+            text=self.tr(u'Importar e Otimizar Imagens de Drone (COG)'),
+            callback=self.run_import_images,
             checkable=False
         )
 
@@ -192,7 +201,11 @@ class ValidarMedicao:
 
     def run_iniciar_map_server(self):
         self.log("Tentando iniciar o map server...")
-        self.map_server.init_setup()
+        self.mapserv.init_setup()
+
+    def run_import_images(self):
+        self.log("Abrindo ferramenta de importação e otimização COG.")
+        self.mapserv_import.exec_()
     
     def run_iniciar_map_server_config(self):
         self.mapserv_config.exec_()
